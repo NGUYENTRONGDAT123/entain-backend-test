@@ -96,3 +96,15 @@ Example GET response method `v1/race/1`: JSON data
     "status": "CLOSED"
 }
 ```
+
+if Id is not found then it would return 404 Not Found response:
+
+Example response for `v1/race/99999`:
+
+```
+{
+  "code": 5,
+  "message": "Race not found",
+  "details": []
+}
+```

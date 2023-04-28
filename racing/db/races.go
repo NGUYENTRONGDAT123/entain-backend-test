@@ -10,6 +10,8 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 
 	"git.neds.sh/matty/entain/racing/proto/racing"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 // RacesRepo provides repository access to races.
@@ -154,7 +156,7 @@ func (r *racesRepo) Get(id int64) (*racing.Race, error) {
 	// casting to racing.Race
 	if err := row.Scan(&race.Id, &race.MeetingId, &race.Name, &race.Number, &race.Visible, &advertisedStart); err != nil {
 		if err == sql.ErrNoRows {
-			return nil, nil
+			return nil, status.Error(codes.NotFound, "Race not found")
 		}
 
 		return nil, err
