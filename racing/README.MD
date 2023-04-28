@@ -80,3 +80,19 @@ Example response of list of races in JSON data:
    ]
 }
 ```
+
+3. introduce a new GET method API endpoint: `v1/race/{id}` where it return values of one race get by id as path parameter:
+
+Example GET response method `v1/race/1`: JSON data
+
+```
+{
+    "id": "1",
+    "meetingId": "5",
+    "name": "North Dakota foes",
+    "number": "2",
+    "visible": false,
+    "advertisedStartTime": "2021-03-03T01:30:57Z",
+    "status": "CLOSED"
+}
+```

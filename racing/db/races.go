@@ -19,6 +19,9 @@ type RacesRepo interface {
 
 	// List will return a list of races.
 	List(filter *racing.ListRacesRequestFilter) ([]*racing.Race, error)
+
+	//Get one race
+	Get(id int64) (*racing.Race, error)
 }
 
 type racesRepo struct {
@@ -132,4 +135,41 @@ func (m *racesRepo) scanRaces(
 	}
 
 	return races, nil
+}
+
+func (r *racesRepo) Get(id int64) (*racing.Race, error) {
+	var (
+		err             error
+		query           string
+		race            racing.Race
+		advertisedStart time.Time
+	)
+	todayTime := time.Now()
+
+	// fetch query to get a race
+	query = getRaceQueries()[raceById]
+
+	row := r.db.QueryRow(query, id)
+
+	// casting to racing.Race
+	if err := row.Scan(&race.Id, &race.MeetingId, &race.Name, &race.Number, &race.Visible, &advertisedStart); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+
+		return nil, err
+	}
+
+	ts, err := ptypes.TimestampProto(advertisedStart)
+	if err != nil {
+		return nil, err
+	}
+
+	race.AdvertisedStartTime = ts
+
+	if todayTime.After(advertisedStart) {
+		race.Status = racing.Status_CLOSED
+	}
+
+	return &race, nil
 }
