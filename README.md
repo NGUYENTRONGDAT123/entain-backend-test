@@ -18,6 +18,13 @@ entain/
 │  ├─ db/
 │  ├─ proto/
 │  ├─ service/
+|  ├─ test/
+│  ├─ main.go
+├─ sports/
+│  ├─ db/
+│  ├─ proto/
+│  ├─ service/
+|  ├─ test/
 │  ├─ main.go
 ├─ README.md
 ```
