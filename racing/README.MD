@@ -81,7 +81,7 @@ Example response of list of races in JSON data:
 }
 ```
 
-3. introduce a new GET method API endpoint: `v1/race/{id}` where it return values of one race get by id as path parameter:
+4. introduce a new GET method API endpoint: `v1/race/{id}` where it return values of one race get by id as path parameter:
 
 Example GET response method `v1/race/1`: JSON data
 
