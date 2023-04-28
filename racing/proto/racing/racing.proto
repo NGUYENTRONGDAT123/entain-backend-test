@@ -5,6 +5,12 @@ option go_package = "/racing";
 
 import "google/protobuf/timestamp.proto";
 
+/* Enum */
+enum OrderBy {
+  ASC = 0;
+  DESC = 1;
+}
+
 service Racing {
   // ListRaces will return a collection of all races.
   rpc ListRaces(ListRacesRequest) returns (ListRacesResponse) {}
@@ -26,6 +32,8 @@ message ListRacesRequestFilter {
   repeated int64 meeting_ids = 1;
   //visible for filtering race
   optional bool visible = 2;
+  // order by for order based on advertised start time
+  optional OrderBy order_by = 3;
 }
 
 /* Resources */
