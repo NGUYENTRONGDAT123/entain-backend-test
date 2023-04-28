@@ -90,6 +90,12 @@ func (r *racesRepo) applyFilter(query string, filter *racing.ListRacesRequestFil
 		query += " WHERE " + strings.Join(clauses, " AND ")
 	}
 
+	if filter.OrderBy != nil && *filter.OrderBy == racing.OrderBy_ASC {
+		query += " ORDER BY advertised_start_time ASC"
+	} else if filter.OrderBy != nil && *filter.OrderBy == racing.OrderBy_DESC {
+		query += " ORDER BY advertised_start_time DESC"
+	}
+
 	return query, args
 }
 

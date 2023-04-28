@@ -213,3 +213,89 @@ func TestListRace_VisibleFilter(t *testing.T) {
 		t.Errorf("Response did not match expected value. Got %v, expected %v", resp.Races, expectedRaces)
 	}
 }
+
+func TestListRace_OrderByAdvertiseStartTime(t *testing.T) {
+	// Set up a test database with for testing
+	racingDB, err := NewTestDB()
+	defer racingDB.Close()
+
+	//clear the data
+	racingDB.Exec(getRaceQueriesForTest()[clearAllDataRace])
+
+	// Set up a new RacingService with the test database
+	racesRepo := db.NewRacesRepo(racingDB)
+	racingService := service.NewRacingService(racesRepo)
+
+	timeTest1, err := time.Parse(time.RFC3339, "2000-04-05T00:00:00Z")
+	timeTest2, err := time.Parse(time.RFC3339, "2001-04-05T00:00:00Z")
+	timeTest3, err := time.Parse(time.RFC3339, "2002-04-05T00:00:00Z")
+	// Insert a race record into the races table
+	InsertNewRace(&racing.Race{
+		Id:                  1,
+		MeetingId:           1,
+		Name:                "Test Race 1",
+		Number:              1,
+		Visible:             true,
+		AdvertisedStartTime: timestamppb.New(timeTest1),
+	}, racingDB, t)
+	InsertNewRace(&racing.Race{
+		Id:                  2,
+		MeetingId:           2,
+		Name:                "Test Race 2",
+		Number:              2,
+		Visible:             false,
+		AdvertisedStartTime: timestamppb.New(timeTest2),
+	}, racingDB, t)
+	InsertNewRace(&racing.Race{
+		Id:                  3,
+		MeetingId:           3,
+		Name:                "Test Race 3",
+		Number:              3,
+		Visible:             true,
+		AdvertisedStartTime: timestamppb.New(timeTest3),
+	}, racingDB, t)
+
+	// Set up a new context and request for the ListRaces RPC
+	ctx := context.Background()
+	orderBy := racing.OrderBy_DESC
+	req := &racing.ListRacesRequest{
+		Filter: &racing.ListRacesRequestFilter{
+			OrderBy: &orderBy,
+		}}
+
+	// Call the ListRaces RPC
+	resp, err := racingService.ListRaces(ctx, req)
+	if err != nil {
+		t.Fatalf("Failed to list races: %v", err)
+	}
+
+	expectedRaces := []*racing.Race{
+		&racing.Race{
+			Id:                  3,
+			MeetingId:           3,
+			Name:                "Test Race 3",
+			Number:              3,
+			Visible:             true,
+			AdvertisedStartTime: timestamppb.New(timeTest3),
+		},
+		&racing.Race{
+			Id:                  2,
+			MeetingId:           2,
+			Name:                "Test Race 2",
+			Number:              2,
+			Visible:             false,
+			AdvertisedStartTime: timestamppb.New(timeTest2),
+		},
+		&racing.Race{
+			Id:                  1,
+			MeetingId:           1,
+			Name:                "Test Race 1",
+			Number:              1,
+			Visible:             true,
+			AdvertisedStartTime: timestamppb.New(timeTest1),
+		},
+	}
+	if !reflect.DeepEqual(resp.Races, expectedRaces) {
+		t.Errorf("Response did not match expected value. Got %v, expected %v", resp.Races, expectedRaces)
+	}
+}
