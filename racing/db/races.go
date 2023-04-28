@@ -103,6 +103,7 @@ func (m *racesRepo) scanRaces(
 	rows *sql.Rows,
 ) ([]*racing.Race, error) {
 	var races []*racing.Race
+	todayTime := time.Now()
 
 	for rows.Next() {
 		var race racing.Race
@@ -122,6 +123,10 @@ func (m *racesRepo) scanRaces(
 		}
 
 		race.AdvertisedStartTime = ts
+
+		if todayTime.After(advertisedStart) {
+			race.Status = racing.Status_CLOSED
+		}
 
 		races = append(races, &race)
 	}

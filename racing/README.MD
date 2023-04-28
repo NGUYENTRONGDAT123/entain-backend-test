@@ -51,3 +51,32 @@ Request Body Schema application/json fields:
   }
 }
 ```
+
+3. Introduce `Status` as a new field in the Race response message in gRPC to show the status whether the race is opened or closed to check if the advertised start time is in the past
+
+Example response of list of races in JSON data:
+
+```
+{
+    "races": [
+        {
+            "id": "1",
+            "meetingId": "5",
+            "name": "North Dakota foes",
+            "number": "2",
+            "visible": false,
+            "advertisedStartTime": "2021-03-03T01:30:57Z",
+            "status": "CLOSED"
+        },
+        {
+            "id": "2",
+            "meetingId": "1",
+            "name": "Connecticut griffins",
+            "number": "12",
+            "visible": true,
+            "advertisedStartTime": "5555-03-02T19:16:58Z",
+            "status": "OPEN"
+        },
+   ]
+}
+```
