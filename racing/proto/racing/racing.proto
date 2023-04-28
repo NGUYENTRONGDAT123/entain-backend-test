@@ -11,6 +11,11 @@ enum OrderBy {
   DESC = 1;
 }
 
+enum Status {
+  OPEN = 0;
+  CLOSED = 1;
+}
+
 service Racing {
   // ListRaces will return a collection of all races.
   rpc ListRaces(ListRacesRequest) returns (ListRacesResponse) {}
@@ -52,5 +57,7 @@ message Race {
   bool visible = 5;
   // AdvertisedStartTime is the time the race is advertised to run.
   google.protobuf.Timestamp advertised_start_time = 6;
+  // The status of the race whether is open or close base on the time the race is advertised to run
+  Status status = 7;
 }
 
